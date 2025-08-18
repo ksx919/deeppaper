@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: deeppaper
+  profiles:
+    active: dev
+
+server:
+  port: 8080
+
+mybatis-plus:
+  type-aliases-package: com.fanxin.entity
+  mapper-locations: classpath*:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      update-strategy: not_null
