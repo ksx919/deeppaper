@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -72,7 +73,12 @@ public class LoginServiceImpl implements LoginService {
             throw exception(USER_REGISTERED);
         }else{
             String md5String = MD5Utils.string2MD5(registerDTO.getPassword());
-            userMapper.addUser(registerDTO.getNickname(),registerDTO.getEmail(),md5String);
+            User registerUser = new User();
+            registerUser.setEmail(registerDTO.getEmail());
+            registerUser.setNickname(registerDTO.getNickname());
+            registerUser.setPassword(md5String);
+            registerUser.setCreatedAt(LocalDateTime.now());
+            userMapper.insert(registerUser);
             Map<String,Object> claims = new HashMap<>();
             claims.put("email",registerDTO.getEmail());
             claims.put("nickname",registerDTO.getNickname());
@@ -112,7 +118,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public void updateLoginTime(String email) {
-        userMapper.updateLoginTime(email);
+        User user = new User();
+        user.setLastLoginTime(LocalDateTime.now());
+        userMapper.update(user,new LambdaQueryWrapper<User>().eq(User::getEmail,email));
     }
 
     @Override
@@ -129,7 +137,9 @@ public class LoginServiceImpl implements LoginService {
         }
         stringRedisTemplate.delete(key);
         String md5String = MD5Utils.string2MD5(retrieveDTO.getPassword());
-        userMapper.retrieve(retrieveDTO.getEmail(),md5String);
+        User user = new User();
+        user.setPassword(md5String);
+        userMapper.update(user,new LambdaQueryWrapper<User>().eq(User::getEmail,email));
     }
 
     @Override
