@@ -3,6 +3,7 @@ package com.fanxin.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -18,14 +19,15 @@ public class RedisConfig {
     private String redisHost;
     @Value("${spring.data.redis.port}")
     private int redisPort;
+    @Value("${spring.data.redis.password}")
+    private String redisPassWord;
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         // 1. 单节点配置（无密码）
         RedisStandaloneConfiguration standaloneConfig =
                 new RedisStandaloneConfiguration(redisHost, redisPort);
-        // 如果需要设置密码，可加上：
-        // standaloneConfig.setPassword(RedisPassword.of("yourPassword"));
+        standaloneConfig.setPassword(RedisPassword.of(redisPassWord));
 
         // 2. Lettuce 客户端配置：自定义超时、无读写拆分
         LettuceClientConfiguration clientConfig =

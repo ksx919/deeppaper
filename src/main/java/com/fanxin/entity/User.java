@@ -7,7 +7,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("User")
+@TableName("user")
 public class User {
     @TableId
     private Long id;

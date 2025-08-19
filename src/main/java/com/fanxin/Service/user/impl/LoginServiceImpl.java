@@ -38,20 +38,20 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void getCode(String email,short type) {
-        try {
-            final String code = String.valueOf(new Random().nextInt(899999) + 100000);
-            String key;
-            if(type == 0){
-                key = "captcha:register:email:" + email;
-            }else {
-                User u = selectUserByEmail(email);
-                if(u == null){
-                    throw exception(USER_NOT_EXIST);
-                }
-                key = "captcha:retrieve:email:" + email;
+    public void getCode(String email, short type) {
+        final String code = String.valueOf(new Random().nextInt(899999) + 100000);
+        String key;
+        if (type == 0) {
+            key = "captcha:register:email:" + email;
+        } else {
+            User u = selectUserByEmail(email);
+            if (u == null) {
+                throw exception(USER_NOT_EXIST);
             }
-            stringRedisTemplate.opsForValue().set(key, code, 5, TimeUnit.MINUTES);
+            key = "captcha:retrieve:email:" + email;
+        }
+        stringRedisTemplate.opsForValue().set(key, code, 5, TimeUnit.MINUTES);
+        try {
             mailService.sendCodeEmail(email, code);
         } catch (Exception e) {
             throw exception(CODE_SEND_ERROR);
@@ -82,7 +82,7 @@ public class LoginServiceImpl implements LoginService {
             Map<String,Object> claims = new HashMap<>();
             claims.put("email",registerDTO.getEmail());
             claims.put("nickname",registerDTO.getNickname());
-            claims.put("id", selectUserByEmail(registerDTO.getEmail()));
+            claims.put("id", selectUserByEmail(registerDTO.getEmail()).getId());
             String token = JwtUtil.genToken(claims);
             stringRedisTemplate.opsForValue().set(token,token,1,TimeUnit.DAYS);
             stringRedisTemplate.delete("captcha:register:email:"+registerDTO.getEmail());

@@ -3,25 +3,28 @@ spring:
     host: smtp.qq.com
     port: 587
     username: 1983262652@qq.com
-    password: rjbzgzbzumpcdfgj
+    password: qaaczftolepvcagh
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
   data:
     redis:
       database: 0
-      host: 154.194.253.134
+      host: 45.197.150.21
       port: 6379
+      password: Moyu3renxiaozu
       timeout: 5000
-      lettuce:
+      jedis:
         pool:
           max-active: 8
-      password: Moyu3renxiaozu
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
 
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://154.194.253.134:3306/deeppaper?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&&rewriteBatchedStatements=true
+    url: jdbc:mysql://45.197.150.21:3306/deeppaper?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&&rewriteBatchedStatements=true
     username: root
     password: Moyu3renxiaozu
     druid:
@@ -54,3 +57,9 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
+
+minio:
+  url: http://45.197.150.21:9000
+  access-key: admin
+  secret-key: Moyu3renxiaozu
+  bucket: deeppaper
