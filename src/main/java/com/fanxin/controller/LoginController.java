@@ -37,7 +37,8 @@ public class LoginController {
      */
     @PostMapping("/register")
     @Operation(summary = "用户注册", description = "用户通过邮箱验证码进行注册")
-    public CommonResult<?> register(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "注册信息", required = true, content = @Content(schema = @Schema(implementation = RegisterDTO.class))) @RequestBody @Validated RegisterDTO registerDTO){
+    public CommonResult<?> register(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "注册信息", required = true, content = @Content(schema = @Schema(implementation = RegisterDTO.class)))
+                                        @RequestBody @Validated RegisterDTO registerDTO){
         return CommonResult.success(loginService.register(registerDTO));
     }
 
@@ -46,7 +47,8 @@ public class LoginController {
      */
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "用户通过邮箱和密码进行登录")
-    public CommonResult<?> login(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "登录信息", required = true, content = @Content(schema = @Schema(implementation = LoginDTO.class))) @RequestBody @Validated LoginDTO loginDTO){
+    public CommonResult<?> login(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "登录信息", required = true, content = @Content(schema = @Schema(implementation = LoginDTO.class)))
+                                     @RequestBody @Validated LoginDTO loginDTO){
         String token = loginService.login(loginDTO.getEmail(), loginDTO.getPassword());
         return CommonResult.success(token);
     }
@@ -56,7 +58,8 @@ public class LoginController {
      */
     @PostMapping("/retrieve")
     @Operation(summary = "用户找回密码", description = "用户通过邮箱和验证码进行找回密码（用于验证找回密码的验证码）")
-    public CommonResult<?> retrieve(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "找回密码信息", required = true, content = @Content(schema = @Schema(implementation = RetrieveDTO.class))) @RequestBody RetrieveDTO retrieveDTO){
+    public CommonResult<?> retrieve(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "找回密码信息", required = true, content = @Content(schema = @Schema(implementation = RetrieveDTO.class)))
+                                        @RequestBody RetrieveDTO retrieveDTO){
         loginService.retrieve(retrieveDTO);
         return CommonResult.success();
     }
@@ -66,8 +69,13 @@ public class LoginController {
      */
     @PostMapping("/logout")
     @Operation(summary = "用户退出登录", description = "用户退出登录")
-    public CommonResult<?> logout(String token){
+    public CommonResult<?> logout(@Parameter(name = "Authorization", description = "用户token", required = true)
+                                  @RequestHeader("Authorization") String authorizationHeader) {
+        // 提取实际的token值（去除Bearer前缀）
+        String token = authorizationHeader.startsWith("Bearer ") ?
+                authorizationHeader.substring(7) : authorizationHeader;
         loginService.logout(token);
         return CommonResult.success();
     }
+
 }

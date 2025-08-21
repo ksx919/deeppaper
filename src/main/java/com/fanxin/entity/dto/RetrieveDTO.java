@@ -10,6 +10,6 @@ public class RetrieveDTO {
     private String email;
     @Schema(description = "验证码", required = true, example = "123456")
     private String code;
-    @Schema(description = "用户密码", required = true, example = "password123")
+    @Schema(description = "用户新密码", required = true, example = "password123")
     private String password;
 }
